@@ -2,7 +2,6 @@
 /public/hot
 /public/storage
 /storage/logs
-/storage/app
 /vendor
 .env
 .phpunit.result.cache
