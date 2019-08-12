@@ -21,7 +21,7 @@ class PayController extends Controller
 //        $this->notify_url = env('PAY_NOTIFY_URL');
 //        $this->return_url = env('PAY_RETURN_URL');
         $this->rsaPrivateKeyFilePath = openssl_pkey_get_private("file://".storage_path('app/keys/private.pem'));    //应用私钥
-        $this->aliPubKey =openssl_get_publickey("file://".storage_path('app/keys/public.pem')); //支付宝公钥
+        $this->aliPubKey =openssl_get_publickey("file://".storage_path('app/keys/pay_pub.pem')); //支付宝公钥
     }
     public function alipay($id)
     {
@@ -30,17 +30,20 @@ class PayController extends Controller
 
         //域名
         $yuming = env('YUMING');
+        $object = '赵恺收款！！';
         //请求业务参数
         $content = [
-            'subject'=> 'h5支付小测试！！！！',
+            'subject'=> urlencode($object),
             'out_trade_no' => $order_data['order_sn'],
             'total_amount' => $order_data['order_amount'],
-            'product_code' => 'QUICK_WAP_WAY'
+//            'product_code' => 'QUICK_WAP_WAY'
+            'product_code' => 'FAST_INSTANT_TRADE_PAY'
         ];
         //公共参数
         $data = [
             'app_id' => $this->app_id,
-            'method' => 'alipay.trade.wap.pay',
+//            'method' => 'alipay.trade.wap.pay',
+            'method' => 'alipay.trade.page.pay',
             'format' => 'JSON',
             'charset' => 'utf-8',
             'sign_type' => 'RSA2',
@@ -48,7 +51,7 @@ class PayController extends Controller
             'version' => '1.0',
             'notify_url'   => 'http://'.$yuming.'/alipayNotify',       //异步通知地址
             'return_url'   => 'http://'.$yuming.'/alipayA',      // 同步通知地址
-            'biz_content' => json_encode($content),
+            'biz_content' => json_encode($content)
         ];
         //拼接参数
         ksort($data);
@@ -58,8 +61,6 @@ class PayController extends Controller
         }
         $b = rtrim($a,'&');
         //签名
-//        dump($this->aliPubKey);
-//        dump(openssl_error_string());die;
         openssl_sign($b,$sign,openssl_pkey_get_private("file://".storage_path('app/keys/private.pem')),OPENSSL_ALGO_SHA256);
         $sign = base64_encode($sign);
         $data['sign']=$sign;
