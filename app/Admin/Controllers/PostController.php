@@ -7,7 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-
+use App\Admin\Actions\Post\GoodsAction;
 class PostController extends AdminController
 {
     /**
@@ -27,19 +27,23 @@ class PostController extends AdminController
         $grid = new Grid(new Goods);
 
         $grid->column('id', __('Id'));
-        $grid->column('goods_name', __('Goods name'));
-        $grid->column('self_price', __('Self price'));
-        $grid->column('market_price', __('Market price'));
-        $grid->column('goods_num', __('Goods num'));
-        $grid->column('sell_num', __('Sell num'));
-        $grid->column('goods_desc', __('Goods desc'));
-        $grid->column('is_up', __('Is up'));
-        $grid->column('is_new', __('Is new'));
-//        $grid->column('goods_img', __('Goods img'));
+        $grid->column('goods_name', __('商品名'));
+        $grid->column('self_price', __('售价'));
+        $grid->column('market_price', __('定价'));
+        $grid->column('goods_num', __('商品库存'));
+        $grid->column('sell_num', __('卖出数量'));
+        $grid->column('goods_desc', __('商品介绍'));
+        $grid->column('is_up', __('是否上架'));
+        $grid->column('is_new', __('是否新品'));
+        $grid->column('goods_sn', __('商品编号'));
 //        $grid->column('goods_imgs', __('Goods imgs'));
         $grid->column('cate_id', __('Cate id'));
-        $grid->column('brand_id', __('Brand id'));
+        $grid->column('brand_id', __('商家id'));
         $grid->column('create_time', __('Create time'));
+
+        $grid->actions(function($actions){
+            $actions->add(new GoodsAction());
+        });
 
         return $grid;
     }
