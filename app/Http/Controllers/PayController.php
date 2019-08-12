@@ -44,7 +44,7 @@ class PayController extends Controller
             'format'   => 'JSON',
             'charset'   => 'utf-8',
             'sign_type'   => 'RSA2',
-            'timestamp'   => date('Y-m-d H:i:s'),
+            'timestamp'   => date('Y-m-d H:i:s',time()),
             'version'   => '1.0',
             'notify_url'   => 'http://'.$yuming.'/alipayNotify',       //异步通知地址
             'return_url'   => 'http://'.$yuming.'/alipayA',      // 同步通知地址
@@ -67,6 +67,7 @@ class PayController extends Controller
         //生成签名
         openssl_sign($trim,$sign,$rsaPrivateKeyFilePath,OPENSSL_ALGO_SHA256);
         $sign = base64_encode($sign);
+//        echo $sign;die;
         $data['sign']=$sign;
         //拼接url
         $a='?';

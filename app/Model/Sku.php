@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Goods extends Model
+class Sku extends Model
 {
-    public $table = 'goods';
+    public $table='sku';
 }
