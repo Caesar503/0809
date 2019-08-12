@@ -51,5 +51,8 @@ Route::get('/orderdetail/show/{id}', 'Order\OrderController@orderdetail')->middl
 //支付宝
 Route::get('/alipay/{id}', 'PayController@alipay')->middleware('auth');
 
+Route::get('/alipayNotify', 'PayController@alipayNotify')->middleware('auth');
+Route::get('/alipayA', 'PayController@alipayA')->middleware('auth');
+
 
 

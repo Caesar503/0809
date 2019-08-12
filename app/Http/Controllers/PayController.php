@@ -12,6 +12,10 @@ class PayController extends Controller
         //该订单的总价 + 订单号
         $order_data = Order::where('id',$id)->first()->toArray();
 
+        //域名
+        $yuming = env('YUMING');
+
+
 //        echo "<pre>";print_r($_SERVER);echo "<pre>";die;
         $str2 = json_encode($_SERVER['HTTP_USER_AGENT']);
         $str = 'Windows';
@@ -26,7 +30,6 @@ class PayController extends Controller
             $prouct_code = 'QUICK_WAP_WAY';
             $url = 'https://openapi.alipaydev.com/gateway.do';
         }
-//        $res = DB::table('shop_order')->where(['order_no'=>$_GET['oid']])->first();
         //业务参数
         $bizcont = [
             'subject' => '1809a赵恺',//交易标题/订单标题/订单关键
@@ -43,8 +46,8 @@ class PayController extends Controller
             'sign_type'   => 'RSA2',
             'timestamp'   => date('Y-m-d H:i:s'),
             'version'   => '1.0',
-            'notify_url'   => 'http://them.mneddx.com/alipayNotify',       //异步通知地址
-            'return_url'   => 'http://vm.them.com/succuess',      // 同步通知地址
+            'notify_url'   => 'http://'.$yuming.'/alipayNotify',       //异步通知地址
+            'return_url'   => 'http://'.$yuming.'/alipayA',      // 同步通知地址
             'biz_content'   => json_encode($bizcont),
         ];
         //拼接参数
@@ -73,8 +76,22 @@ class PayController extends Controller
         $trim2 = rtrim($a,'&');
 //        var_dump($trim2);die;
         $url2 = $url.$trim2;
-        echo $url2;die;
+        header('refresh:2;url='.$url2);
+    }
+    public function alipayA()
+    {
+        echo '支付成功：三秒后跳至首页';
+    }
 
-
+    //异步回调
+    public function alipayNotify()
+    {
+        $p = json_encode($_POST);
+        $data=json_decode($p,true);
+        $log_str = "\n>>>>>> " .date('Y-m-d H:i:s') . ' '.$p . " \n";
+        is_dir('logs') or mkdir('logs', 0777, true);
+        file_put_contents('logs/alipay_notify',$log_str,FILE_APPEND);
+        echo 'success';
+        //TODO 验签 更新订单状态
     }
 }
